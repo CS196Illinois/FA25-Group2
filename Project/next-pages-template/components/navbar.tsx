@@ -14,6 +14,9 @@ import { Input } from "@heroui/input";
 import { link as linkStyles } from "@heroui/theme";
 import NextLink from "next/link";
 import clsx from "clsx";
+import { useEffect, useState } from "react";
+import { useRouter } from "next/router";
+import Cookies from "js-cookie";
 
 import { siteConfig } from "@/config/site";
 import { ThemeSwitch } from "@/components/theme-switch";
@@ -21,12 +24,30 @@ import {
   TwitterIcon,
   GithubIcon,
   DiscordIcon,
-  HeartFilledIcon,
   SearchIcon,
   Logo,
 } from "@/components/icons";
 
 export const Navbar = () => {
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [isMounted, setIsMounted] = useState(false);
+  const router = useRouter();
+
+  useEffect(() => {
+    setIsMounted(true);
+    const token = Cookies.get("token");
+
+    if (token) {
+      setIsAuthenticated(true);
+    }
+  }, []);
+
+  const handleSignOut = () => {
+    Cookies.remove("token");
+    setIsAuthenticated(false);
+    router.push("/");
+  };
+
   const searchInput = (
     <Input
       aria-label="Search"
@@ -93,16 +114,26 @@ export const Navbar = () => {
         </NavbarItem>
         <NavbarItem className="hidden lg:flex">{searchInput}</NavbarItem>
         <NavbarItem className="hidden md:flex">
-          <Button
-            isExternal
-            as={Link}
-            className="text-sm font-normal text-default-600 bg-default-100"
-            href={siteConfig.links.sponsor}
-            startContent={<HeartFilledIcon className="text-danger" />}
-            variant="flat"
-          >
-            Sponsor
-          </Button>
+          {isMounted && isAuthenticated ? (
+            <Button
+              as={Link}
+              className="text-sm font-normal text-default-600 bg-default-100"
+              variant="flat"
+              onClick={handleSignOut}
+            >
+              Sign Out
+            </Button>
+          ) : isMounted ? (
+            <NextLink href="/signin">
+              <Button
+                as={Link}
+                className="text-sm font-normal text-default-600 bg-default-100"
+                variant="flat"
+              >
+                Sign In
+              </Button>
+            </NextLink>
+          ) : null}
         </NavbarItem>
       </NavbarContent>
 
