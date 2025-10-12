@@ -47,7 +47,7 @@ export default function SignupPage() {
 
         setError(data.error || "Something went wrong");
       }
-    } catch (e) {
+    } catch (_e) {
       setError("Something went wrong");
     }
   };

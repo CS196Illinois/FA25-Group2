@@ -57,7 +57,7 @@ export default function SigninPage() {
           );
         }
       }
-    } catch (e) {
+    } catch (_e) {
       setError("Something went wrong. Please try again later.");
     } finally {
       setLoading(false);
