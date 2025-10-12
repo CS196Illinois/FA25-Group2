@@ -1,0 +1,70 @@
+export const products = [
+  {
+    id: "1",
+    name: "Vintage Leather Jacket",
+    price: "120.00",
+    image: "https://i.redd.it/o44ltaqwatmd1.jpeg",
+    description: "A classic vintage leather jacket, well-preserved.",
+    category: "Apparel",
+  },
+  {
+    id: "2",
+    name: "Textbook: Calculus I",
+    price: "45.00",
+    image:
+      "https://i.ytimg.com/vi/zcUQrJFo9z0/hq720.jpg?sqp=-oaymwEhCK4FEIIDSFryq4qpAxMIARUAAAAAGAElAADIQj0AgKJD&rs=AOn4CLAzdp3Fp4a3TUON74gxkqindeTO_g",
+    description: "Used Calculus I textbook, good condition.",
+    category: "Books",
+  },
+  {
+    id: "3",
+    name: "Gaming Headset",
+    price: "75.00",
+    image: "https://i.ebayimg.com/images/g/STsAAOSwyxtmvfsu/s-l1600.webp",
+    description: "High-quality gaming headset with microphone.",
+    category: "Electronics",
+  },
+  {
+    id: "4",
+    name: "Desk Lamp (LED)",
+    price: "20.00",
+    image:
+      "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQZg_P06voGgjZh8KJhju8wGGZ4fVkSixi_pA&s",
+    description: "Modern LED desk lamp with adjustable brightness.",
+    category: "Home Goods",
+  },
+  {
+    id: "5",
+    name: "Acoustic Guitar",
+    price: "250.00",
+    image:
+      "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSfAu2udPO3_kyrZ_PylU5UpLIVt5zG8eVKsg&s",
+    description: "Beginner-friendly acoustic guitar, great sound.",
+    category: "Musical Instruments",
+  },
+  {
+    id: "6",
+    name: "Running Shoes",
+    price: "60.00",
+    image:
+      "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTTjCS-07t4bkuKGDtnM4WTbqt6mGrtE1UYIQ&s",
+    description: "Comfortable running shoes, size 10.",
+    category: "Apparel",
+  },
+  {
+    id: "7",
+    name: "Coffee Maker",
+    price: "35.00",
+    image: "https://i.ebayimg.com/thumbs/images/g/VZMAAeSwEZho6CWB/s-l1200.jpg",
+    description: "Programmable coffee maker, 12-cup capacity.",
+    category: "Home Goods",
+  },
+  {
+    id: "8",
+    name: "External Hard Drive",
+    price: "80.00",
+    image: "https://i.ebayimg.com/images/g/vC4AAeSwyI1o0JFx/s-l1600.webp",
+    description: "1TB external hard drive, USB 3.0.",
+    category: "Electronics",
+  },
+];
