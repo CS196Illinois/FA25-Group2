@@ -1,5 +1,5 @@
 # Group 2
-Group Name: A DASKE
+Group Name: JEAKS Marketplace
 
 
 [MVP Link](https://docs.google.com/document/d/1_ZWiWz_r-qtyxH30xUFmfThxrriMveFe/edit?usp=sharing&ouid=114002994384820023223&rtpof=true&sd=true)
