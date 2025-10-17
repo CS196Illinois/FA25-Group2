@@ -5,7 +5,8 @@ export const products = [
     price: "120.00",
     image: "https://i.redd.it/o44ltaqwatmd1.jpeg",
     description: "A classic vintage leather jacket, well-preserved.",
-    category: "Apparel",
+    tags: ["apparel", "vintage", "jacket", "leather"],
+    distance: 1,
   },
   {
     id: "2",
@@ -14,7 +15,8 @@ export const products = [
     image:
       "https://i.ytimg.com/vi/zcUQrJFo9z0/hq720.jpg?sqp=-oaymwEhCK4FEIIDSFryq4qpAxMIARUAAAAAGAElAADIQj0AgKJD&rs=AOn4CLAzdp3Fp4a3TUON74gxkqindeTO_g",
     description: "Used Calculus I textbook, good condition.",
-    category: "Books",
+    tags: ["books", "textbook", "calculus", "math"],
+    distance: 2,
   },
   {
     id: "3",
@@ -22,7 +24,8 @@ export const products = [
     price: "75.00",
     image: "https://i.ebayimg.com/images/g/STsAAOSwyxtmvfsu/s-l1600.webp",
     description: "High-quality gaming headset with microphone.",
-    category: "Electronics",
+    tags: ["electronics", "gaming", "headset", "audio"],
+    distance: 3,
   },
   {
     id: "4",
@@ -31,7 +34,8 @@ export const products = [
     image:
       "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQZg_P06voGgjZh8KJhju8wGGZ4fVkSixi_pA&s",
     description: "Modern LED desk lamp with adjustable brightness.",
-    category: "Home Goods",
+    tags: ["home goods", "lighting", "desk", "led"],
+    distance: 4,
   },
   {
     id: "5",
@@ -40,7 +44,8 @@ export const products = [
     image:
       "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSfAu2udPO3_kyrZ_PylU5UpLIVt5zG8eVKsg&s",
     description: "Beginner-friendly acoustic guitar, great sound.",
-    category: "Musical Instruments",
+    tags: ["musical instruments", "guitar", "acoustic"],
+    distance: 5,
   },
   {
     id: "6",
@@ -49,7 +54,8 @@ export const products = [
     image:
       "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTTjCS-07t4bkuKGDtnM4WTbqt6mGrtE1UYIQ&s",
     description: "Comfortable running shoes, size 10.",
-    category: "Apparel",
+    tags: ["apparel", "shoes", "running", "athletic"],
+    distance: 6,
   },
   {
     id: "7",
@@ -57,7 +63,8 @@ export const products = [
     price: "35.00",
     image: "https://i.ebayimg.com/thumbs/images/g/VZMAAeSwEZho6CWB/s-l1200.jpg",
     description: "Programmable coffee maker, 12-cup capacity.",
-    category: "Home Goods",
+    tags: ["home goods", "kitchen", "coffee"],
+    distance: 7,
   },
   {
     id: "8",
@@ -65,6 +72,7 @@ export const products = [
     price: "80.00",
     image: "https://i.ebayimg.com/images/g/vC4AAeSwyI1o0JFx/s-l1600.webp",
     description: "1TB external hard drive, USB 3.0.",
-    category: "Electronics",
+    tags: ["electronics", "storage", "hard drive"],
+    distance: 8,
   },
 ];
