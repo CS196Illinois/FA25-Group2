@@ -20,7 +20,6 @@ export default function ProfilePage() {
   }, [setShowSignOutInNavbar]);
 
   const handleSignOut = () => {
-    // This is a mock function for testing purposes
     router.push("/");
   };
 
