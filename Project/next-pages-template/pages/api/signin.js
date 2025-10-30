@@ -1,6 +1,7 @@
 import pool from './db'; 
-import bcrypt from 'bcryptjs'; 
+import bcrypt from 'bcrypt'; 
 import jwt from 'jsonwebtoken'; 
+import authorized from './authorized';
 
 export default async function handler(req, res) {
   if (req.method !== 'POST') {
@@ -29,6 +30,7 @@ export default async function handler(req, res) {
       process.env.JWT_SECRET,             
       { expiresIn: '999h' }                 
     );
+    authorized(token);
     
     res.status(200).json({ message: 'Signed in', token });
 

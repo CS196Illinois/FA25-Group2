@@ -12,7 +12,7 @@ export default function MarketplacePage() {
   const [distanceFilter, setDistanceFilter] = useState(10);
   const [minPriceFilter, setMinPriceFilter] = useState(0);
   const [maxPriceFilter, setMaxPriceFilter] = useState(1000);
-  const [sortBy, setSortBy] = useState("newest"); // New state
+  const [sortBy, setSortBy] = useState("newest");
 
   const availableTags = useMemo(() => {
     const allTags = products.flatMap((product) => product.tags);
@@ -57,10 +57,8 @@ export default function MarketplacePage() {
       return price >= minPriceFilter && price <= maxPriceFilter;
     });
 
-    // Apply sorting
     filtered.sort((a, b) => {
       if (sortBy === "newest") {
-        // For mock data, we don't have a 'newest' property, so we'll sort by ID as a placeholder
         return parseInt(b.id) - parseInt(a.id);
       } else if (sortBy === "price-asc") {
         return parseFloat(a.price) - parseFloat(b.price);
