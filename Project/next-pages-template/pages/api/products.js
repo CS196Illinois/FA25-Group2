@@ -5,7 +5,7 @@ export default async function handler(req, res) {
         return res.status(405).json({ error: 'Method not allowed' }); 
     }
 
-    productResult = pool.query("SELECT * FROM products");
-
-    res.status(200).json({result: productResult.rows});
+    const productResult = (await pool.query("SELECT * FROM products")).rows;
+    
+    res.status(200).json({products: productResult});
 }

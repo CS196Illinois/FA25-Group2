@@ -1,17 +1,16 @@
 import { useState } from "react";
 import { useRouter } from "next/router";
-import { Input } from "@heroui/input";
-import { Button } from "@heroui/button";
-import { Tabs, Tab } from "@heroui/tabs";
-
+import { Input, Button, Tabs, Tab } from "@heroui/react";
 import { title } from "@/components/primitives";
 import DefaultLayout from "@/layouts/default";
+import axios from "axios";
 
 const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
 export default function AuthPage() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [username, setUsername] = useState("");
   const [signInError, setSignInError] = useState("");
   const [signUpError, setSignUpError] = useState("");
   const [signUpSuccess, setSignUpSuccess] = useState("");
@@ -23,43 +22,46 @@ export default function AuthPage() {
     e.preventDefault();
     setSignInError("");
 
-    if (!email || !password) {
-      setSignInError("Email and password are required");
-
+    if (!username || !password) {
+      setSignInError("Username and password are required");
       return;
     }
 
-    if (!emailRegex.test(email)) {
-      setSignInError("Please enter a valid email address");
+    if (selectedTab == "signup") {
+      if (!email) {
+        setSignInError("Email is required");
+        return;
+      }
 
-      return;
+      if (!emailRegex.test(email)) {
+        setSignInError("Please enter a valid email address");
+        return;
+      }
     }
 
     setLoading(true);
 
     try {
-      const res = await fetch("/api/signin", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ email, password }),
+      const result = await axios.post("/api/signin", {
+        username, password
       });
 
-      if (res.ok) {
+      if (result.status == 200) {
+        const token = result.data.token;
+        window.localStorage.setItem("authToken", token);
+        window.localStorage.setItem("username", username);
         router.push("/");
       } else {
-        const data = await res.json();
 
-        if (res.status === 401) {
+        if (result.status === 401) {
           setSignInError("Incorrect email or password. Please try again.");
         } else {
           setSignInError(
-            data.error || "Something went wrong. Please try again later.",
+            result.data.error || "Something went wrong. Please try again later.",
           );
         }
       }
-    } catch (_e) {
+    } catch (_) {
       setSignInError("Something went wrong. Please try again later.");
     } finally {
       setLoading(false);
@@ -86,15 +88,18 @@ export default function AuthPage() {
     setLoading(true);
 
     try {
-      const res = await fetch("/api/signup", {
+      const result = await fetch("/api/signup", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({ email, password }),
+        body: JSON.stringify({ username, email, password }),
       });
 
-      if (res.ok) {
+      if (result.ok) {
+        const token = (await result.json()).token;
+        window.localStorage.setItem("authToken", token);
+        window.localStorage.setItem("username", username);
         setSignUpSuccess(
           "Sign up successful! Please check your email to verify your account.",
         );
@@ -103,11 +108,11 @@ export default function AuthPage() {
           setSignUpSuccess("");
         }, 3000);
       } else {
-        const data = await res.json();
+        const data = await result.json();
 
         setSignUpError(data.error || "Something went wrong");
       }
-    } catch (_e) {
+    } catch (_) {
       setSignUpError("Something went wrong");
     } finally {
       setLoading(false);
@@ -136,10 +141,9 @@ export default function AuthPage() {
                 <Input
                   fullWidth
                   disabled={loading}
-                  label="Email"
-                  type="email"
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
+                  label="Username"
+                  value={username}
+                  onChange={(e) => setUsername(e.target.value)}
                 />
                 <Input
                   fullWidth
@@ -160,6 +164,13 @@ export default function AuthPage() {
                 className="flex flex-col gap-4 mt-4"
                 onSubmit={handleSignUpSubmit}
               >
+                <Input
+                  fullWidth
+                  disabled={loading}
+                  label="Username"
+                  value={username}
+                  onChange={(e) => setUsername(e.target.value)}
+                />
                 <Input
                   fullWidth
                   disabled={loading}
