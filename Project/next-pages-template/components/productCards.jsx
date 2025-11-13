@@ -19,11 +19,7 @@ export default function ProductCards({ products, buy }) {
             return false;
         }
 
-        if (result.status == 200) {
-            return true;
-        }
-
-        return false;
+        return result.status == 200;
     }
     
     return products.map((product) => {
@@ -37,7 +33,7 @@ export default function ProductCards({ products, buy }) {
                                 Price: <NumberInput startContent={
                                     <div className="pointer-events-none flex items-center">
                                         <span className="text-default-400 text-small">$</span>
-                                    </div>} onChange={(price) => {setNewPrice(price);console.log(price);}} />
+                                    </div>} onChange={(price) => {setNewPrice(price);}} />
                             </ModalBody>
                             <ModalFooter>
                                 <Button color="danger" variant="light" onPress={onClose}>Cancel</Button>
