@@ -18,7 +18,7 @@ export default function AuthPage() {
   const [selectedTab, setSelectedTab] = useState("signin");
   const router = useRouter();
 
-  const handleSignInSubmit = async (e: React.FormEvent) => {
+  const handleSignInSubmit = async (e) => {
     e.preventDefault();
     setSignInError("");
 
@@ -68,7 +68,7 @@ export default function AuthPage() {
     }
   };
 
-  const handleSignUpSubmit = async (e: React.FormEvent) => {
+  const handleSignUpSubmit = async (e) => {
     e.preventDefault();
     setSignUpError("");
     setSignUpSuccess("");
@@ -127,7 +127,7 @@ export default function AuthPage() {
             fullWidth
             aria-label="Authentication"
             selectedKey={selectedTab}
-            onSelectionChange={(key) => setSelectedTab(key as string)}
+            onSelectionChange={(key) => setSelectedTab(key)}
           >
             <Tab key="signin" title="Sign In">
               <form

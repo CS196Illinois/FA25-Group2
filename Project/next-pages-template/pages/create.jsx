@@ -6,7 +6,7 @@ import { useMemo } from "react";
 
 import DefaultLayout from "@/layouts/default";
 import { title, subtitle } from "@/components/primitives";
-import { products } from "@/data/products"; // To get available tags
+import { products } from "@/data/products"; 
 
 export default function CreateListingPage() {
   const router = useRouter();
@@ -15,7 +15,7 @@ export default function CreateListingPage() {
   const [price, setPrice] = useState("");
   const [imageUrl, setImageUrl] = useState("");
   const [currentTagInput, setCurrentTagInput] = useState("");
-  const [selectedTags, setSelectedTags] = useState<string[]>([]);
+  const [selectedTags, setSelectedTags] = useState([]);
   const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
   const [loading, setLoading] = useState(false);
@@ -39,22 +39,22 @@ export default function CreateListingPage() {
       .slice(0, 5);
   }, [currentTagInput, availableTags, selectedTags]);
 
-  const handleTagInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleTagInputChange = (e) => {
     setCurrentTagInput(e.target.value);
   };
 
-  const handleSuggestionClick = (tag: string) => {
+  const handleSuggestionClick = (tag) => {
     if (!selectedTags.includes(tag)) {
       setSelectedTags([...selectedTags, tag]);
     }
     setCurrentTagInput("");
   };
 
-  const handleTagRemove = (tagToRemove: string) => {
+  const handleTagRemove = (tagToRemove) => {
     setSelectedTags(selectedTags.filter((tag) => tag !== tagToRemove));
   };
 
-  const handleSubmit = async (e: React.FormEvent) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     setError("");
     setSuccess("");
@@ -87,7 +87,7 @@ export default function CreateListingPage() {
           price: parseFloat(price),
           image: imageUrl,
           tags: selectedTags,
-          distance: Math.floor(Math.random() * 10) + 1, // Mock distance
+          distance: Math.floor(Math.random() * 10) + 1,
         }),
       });
 
@@ -162,7 +162,6 @@ export default function CreateListingPage() {
             onChange={(e) => setImageUrl(e.target.value)}
           />
 
-          {/* Tag Input with Suggestions */}
           <div className="relative">
             <Input
               fullWidth
@@ -203,7 +202,6 @@ export default function CreateListingPage() {
             )}
           </div>
 
-          {/* Selected Tags Display */}
           {selectedTags.length > 0 && (
             <div className="flex flex-wrap gap-2 mt-2">
               {selectedTags.map((tag) => (
