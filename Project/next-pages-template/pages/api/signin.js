@@ -4,11 +4,11 @@ import jwt from "jsonwebtoken";
 import authorized from "./authorized";
 
 export default async function handler(req, res) {
-  if (req.method !== "POST") {
+  if (req.method !== "GET") {
     return res.status(405).json({ error: "Method not allowed" }); 
   }
   
-  const { username, password } = req.body;
+  const { username, password } = req.query;
 
   try {
     const result = await pool.query("SELECT * FROM users WHERE username = $1", [username]);

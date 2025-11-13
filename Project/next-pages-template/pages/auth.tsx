@@ -42,8 +42,8 @@ export default function AuthPage() {
     setLoading(true);
 
     try {
-      const result = await axios.post("/api/signin", {
-        username, password
+      const result = await axios.get("/api/signin", {
+        params: { username, password }
       });
 
       if (result.status == 200) {
@@ -88,16 +88,12 @@ export default function AuthPage() {
     setLoading(true);
 
     try {
-      const result = await fetch("/api/signup", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ username, email, password }),
+      const result = await axios.post("/api/signup", { 
+        username, email, password
       });
 
-      if (result.ok) {
-        const token = (await result.json()).token;
+      if (result.status == 200) {
+        const token = result.data.token;
         window.localStorage.setItem("authToken", token);
         window.localStorage.setItem("username", username);
         setSignUpSuccess(
@@ -108,7 +104,7 @@ export default function AuthPage() {
           setSignUpSuccess("");
         }, 3000);
       } else {
-        const data = await result.json();
+        const data = result.data;
 
         setSignUpError(data.error || "Something went wrong");
       }

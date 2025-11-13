@@ -1,5 +1,6 @@
 import pool from "./db.js"; 
 import bcrypt from "bcrypt"; 
+import jwt from "jsonwebtoken";
 // import { Resend } from "resend"; 
 
 // VERIFICATION EMAIL IS WORK IN PROGRESS
@@ -42,7 +43,7 @@ export default async function handler(req, res) {
       process.env.JWT_SECRET,       
       { expiresIn: "999h" }                 
     );
-    res.status(201).json({ token });
+    res.status(200).json({ token });
 
   } catch (err) {
     console.error(err); 

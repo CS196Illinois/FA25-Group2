@@ -3,6 +3,7 @@ import { useState } from "react";
 import { useEffect } from "react";
 import ProductCards from "@/components/productCards";
 import axios from "axios";
+import { ToastProvider } from "@heroui/react";
 
 export default function Marketplace() {
     async function getProducts() {
@@ -28,6 +29,7 @@ export default function Marketplace() {
 
     return <>
         <Navbar />
+        <ToastProvider placement="top-center" toastOffset={60}></ToastProvider>
         <div className="mt-4">
             <div></div>
             <div>
