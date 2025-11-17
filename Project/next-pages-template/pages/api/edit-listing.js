@@ -2,17 +2,16 @@ import pool from './db';
 import authorized from './authorized';
 
 export default async function editListing(req, res) {
-    // Check request type
+    // check request type
     if (req.method !== "POST") {
         res.status(405).json({error: 'Method not allowed'});
     }
 
-    // Gather information from req (assuming how it is given)
-    const {product_id, user_id, new_name, new_description, new_price, new_image, new_tags, new_sold} = req.body;
-    const {token} = req.cookies;
+    // get info from req (assuming how it is given)
+    const {token, product_id, user_id, new_name, new_description, new_price, new_image, new_tags, new_sold} = req.query;
 
     try {
-    // Check authorization and sold status before implementing
+    // check auth and sold status before implementing
         if (!(authorized(token, user_id))) {
             return res.status(401).json({error: 'Invalid token.'})
         }
@@ -20,7 +19,7 @@ export default async function editListing(req, res) {
             return res.status(401).json({error: 'This product has already been sold.'})
         }
 
-    // Implement changes
+    // implement changes
         if (new_name) {
             await pool.query(
                 'UPDATE products SET name = $1 WHERE product_id = $2', [new_name, product_id]
@@ -51,10 +50,10 @@ export default async function editListing(req, res) {
                 'UPDATE products SET sold = $1 WHERE product_id = $2', [new_sold, product_id]        
             );
         }
-    //Return success message
+    // success message
         return res.status(200).json({ success: true, message: 'Listing updated successfully.' });
 
-    // Catch any unexpected errors
+    // catch errors
     } catch (err) {
         console.error(err)
         return res.status(500).json({error: 'Error editting listing.'})
