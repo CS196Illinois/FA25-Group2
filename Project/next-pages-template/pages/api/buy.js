@@ -1,4 +1,5 @@
-import pool from "./db";
+import pool from "../../pool";
+import authorized from "../../authorized"; 
 
 export default async function handler(req, res) {
   if (req.method !== "POST") {
@@ -6,22 +7,21 @@ export default async function handler(req, res) {
   }
 
   try {
-  
     const data = req.body?.params || req.body || {};
-
     const { username, authToken, price, product_id } = data;
 
+  
     if (!username || !authToken) {
       return res.status(401).json({ error: "Missing credentials" });
     }
 
-  
-    const authResult = await Authrize(username, authToken);
-    if (!authResult || authResult.authorized !== true) {
+ 
+    const authOK = authorized(authToken, username); 
+    if (!authOK) {
       return res.status(403).json({ error: "Unauthorized" });
     }
 
-
+   
     if (!product_id) {
       return res.status(403).json({ error: "Missing product_id" });
     }
@@ -41,7 +41,7 @@ export default async function handler(req, res) {
 
     const seller = productRes.rows[0].seller;
 
-  
+    // Insert negotiation
     await pool.query(
       `INSERT INTO negotiations (product_id, buyer, seller, price, status, created_at)
        VALUES ($1, $2, $3, $4, $5, NOW())`,
@@ -50,7 +50,7 @@ export default async function handler(req, res) {
 
     return res.status(200).json({
       success: true,
-      message: "Negotiation submitted"
+      message: "Negotiation submitted",
     });
 
   } catch (err) {
