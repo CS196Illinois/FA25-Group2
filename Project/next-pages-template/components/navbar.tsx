@@ -35,15 +35,13 @@ export const Navbar = () => {
 
   useEffect(() => {
     setIsMounted(true);
-    const token = Cookies.get("token");
-
-    if (token) {
+    if (window.localStorage.getItem("authToken")) {
       setIsAuthenticated(true);
     }
   }, []);
 
   const handleSignOut = () => {
-    Cookies.remove("token");
+    window.localStorage.removeItem("authToken");
     setIsAuthenticated(false);
     router.push("/");
   };
