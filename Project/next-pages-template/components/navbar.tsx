@@ -13,7 +13,6 @@ import {
   DropdownMenu,
   DropdownItem,
 } from "@heroui/dropdown";
-import { Button } from "@heroui/button";
 import { Link } from "@heroui/link";
 import { link as linkStyles } from "@heroui/theme";
 import NextLink from "next/link";
@@ -26,6 +25,7 @@ import { useAppContext } from "@/context/AppContext";
 import { siteConfig } from "@/config/site";
 import { ThemeSwitch } from "@/components/theme-switch";
 import {} from "@/components/icons";
+import { Button } from "@heroui/react";
 
 export const Navbar = () => {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
@@ -83,11 +83,10 @@ export const Navbar = () => {
         <NavbarItem className="hidden md:flex gap-2">
           {isMounted && (isAuthenticated || showSignOutInNavbar) ? (
             <>
-              <NextLink href="/create-listing">
+              <NextLink href="/create">
                 <Button
-                  as={Link}
-                  className="text-sm font-normal text-default-600 bg-default-100"
-                  variant="flat"
+                  color="primary"
+                  className="text-sm font-normal"
                 >
                   Create Listing
                 </Button>
