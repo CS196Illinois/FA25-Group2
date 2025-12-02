@@ -1,5 +1,5 @@
-import pool from "../../pool";
-import authorized from "../../authorized";
+import pool from "./db";
+import authorized from "./authorized";
 
 export default async function handler(req, res) {
   
