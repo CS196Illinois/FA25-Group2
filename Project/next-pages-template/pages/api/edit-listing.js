@@ -20,6 +20,7 @@ export default async function editListing(req, res) {
         );
         if (sold_status == true) {
             return res.status(401).json({error: 'This product has already been sold.'})
+        }
 
     // implement changes
         if (new_name) {

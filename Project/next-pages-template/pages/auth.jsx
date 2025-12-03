@@ -104,12 +104,17 @@ export default function AuthPage() {
           setSignUpSuccess("");
         }, 3000);
       } else {
+        if (result.status === 400) {
+          setSignUpError("Please provide an '@illinois.edu' email.");
+        }
         const data = result.data;
 
-        setSignUpError(data.error || "Something went wrong");
+        //setSignUpError(data.error || "Something went wrong");
+
       }
-    } catch (_) {
-      setSignUpError("Something went wrong");
+    } catch (error) {
+      console.log(error)
+      setSignUpError(error.response.data.error);
     } finally {
       setLoading(false);
     }
