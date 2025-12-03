@@ -50,7 +50,7 @@ export default function AuthPage() {
         const token = result.data.token;
         window.localStorage.setItem("authToken", token);
         window.localStorage.setItem("username", username);
-        router.push("/");
+        router.push("/marketplace");
       } else {
 
         if (result.status === 401) {
