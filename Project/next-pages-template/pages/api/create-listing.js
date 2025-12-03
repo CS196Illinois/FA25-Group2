@@ -1,12 +1,18 @@
 import jwt from 'jsonwebtoken';
 import pool from './db';
+import authorized from './authorized';
 
 export default async function handler(req, res) {
   if (req.method !== 'POST') {
     return res.status(405).json({ error: 'Method not allowed' });
   }
 
-  const {token, user_id, name, description, price, image, tags} = req.params;
+  const {token, username, name, description, price, image, tags} = req.body;
+  const user_result = await pool.query(
+    'SELECT user_id FROM users WHERE username = $1', [username]
+  );
+  const user_id = user_result.rows[0].user_id;
+  console.log(user_id);
 
   if (!authorized(token, user_id)) {
     return res.status(401).json({ error: 'Unauthorized.' });
@@ -19,11 +25,11 @@ export default async function handler(req, res) {
     }
 
     await pool.query(
-      'INSERT INTO products (name, description, price, image, user_id, sold) VALUES ($1, $2 $3, $4, $5, $6)', [name, description, price, image, user_id, false]
+      'INSERT INTO products (name, description, price, image, user_id, tags, sold) VALUES ($1, $2, $3, $4, $5, $6, $7)', [name, description, price, image, user_id, {tags}, false]
     );
 
     // success message
-    res.status(201).json({success: true; message: 'Listing created successfully!'});
+    res.status(200).json({success: true, message: 'Listing created successfully!'});
 
     // catch errors
   } catch (error) {

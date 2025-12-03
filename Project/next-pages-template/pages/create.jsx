@@ -3,7 +3,7 @@ import { useRouter } from "next/router";
 import { Input } from "@heroui/input";
 import { Button } from "@heroui/button";
 import { useMemo } from "react";
-
+import axios from "axios";
 import DefaultLayout from "@/layouts/default";
 import { title, subtitle } from "@/components/primitives";
 import { products } from "@/data/products"; 
@@ -76,22 +76,17 @@ export default function CreateListingPage() {
     }
 
     try {
-      const res = await fetch("/api/create-listing", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
+      const res = await axios.post("/api/create-listing", {
+          token: window.localStorage.getItem("authToken"),
+          username: window.localStorage.getItem("username"),
           name,
           description,
           price: parseFloat(price),
           image: imageUrl,
           tags: selectedTags,
-          distance: Math.floor(Math.random() * 10) + 1,
-        }),
-      });
+        });
 
-      if (res.ok) {
+      if (res.status == 200) {
         setSuccess("Listing created successfully!");
         setName("");
         setDescription("");
@@ -105,6 +100,7 @@ export default function CreateListingPage() {
         setError(data.error || "Failed to create listing.");
       }
     } catch (_e) {
+      console.log(_e);
       setError("An unexpected error occurred.");
     } finally {
       setLoading(false);
