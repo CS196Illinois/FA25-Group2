@@ -19,12 +19,17 @@ export default function ProductCards({ products, buy }) {
                     <p className="text-lg">${parseFloat(product.price).toFixed(2)}</p>
                 </Chip>
             </CardBody>
-            <CardFooter>
+            <CardFooter className="flex flex-col items-start">
                 <div className="flex items-center gap-2">
                     {buy && <BuyButton product={product} />}
 
                     <p className="flex gap-2 items-center">Posted by 
                         <Link className="text-foreground gap-1" href={`/profile/${product.seller}`}><Avatar size="sm" src={product.pfp} showFallback /> {product.seller}</Link></p>
+                </div>
+                <div className="flex gap-2 mt-8">
+                    {product.tags?.tags.map((tag) => {
+                        return <Chip variant="flat" color="primary">{tag}</Chip>
+                    })}
                 </div>
             </CardFooter>
         </Card>
@@ -35,19 +40,39 @@ export function BuyButton({ product }) {
     const [newPrice, setNewPrice] = useState(0);
     const {isOpen, onOpen, onOpenChange} = useDisclosure();
 
-    async function buy(username, authToken, price) {
+    async function buy(username, authToken, price, product_id) {
         let result;
         try {
-            result = await axios.post("/buy", {
+            result = await axios.post("/api/buy", {
                 username,
                 authToken,
-                price
+                price,
+                product_id
             });
-        } catch (_) {
+
+            const negotiation_id = result.data.negotiation_id;
+
+            await axios.post("/api/notifyNegotiation", {
+                sender: username,
+                authToken,
+                price,
+                product_id,
+                negotiation_id
+            });
+        } catch (error) {
+            if (axios.isAxiosError(error)) {
+                return error.response.data.error;
+            }
+
             return false;
         }
 
-        return result.status == 200;
+        if (result.status == 200) {
+            return true;
+        }
+
+
+        return result.data.error;
     }
 
     return <>
@@ -69,12 +94,14 @@ export function BuyButton({ product }) {
                             const success = await buy(
                                 window.localStorage.getItem("username"),
                                 window.localStorage.getItem("authToken"),
-                                newPrice
+                                newPrice,
+                                product.product_id
                             );
                             if (success) {
                                 addToast({
                                     title: "Negotiation sent",
-                                    description: "We've notified the seller about your bid."
+                                    description: "We've notified the seller about your bid.",
+                                    color: "primary"
                                 });
                             } else {
                                 addToast({
@@ -92,26 +119,28 @@ export function BuyButton({ product }) {
     
     <Dropdown>
         <DropdownTrigger>
-            <Button color="primary">Buy Now</Button>
+            <Button color="primary">Buy</Button>
         </DropdownTrigger> 
         <DropdownMenu onAction={async (key) => {
             if (key == "lp") {
                 const success = await buy(
                     window.localStorage.getItem("username"),
                     window.localStorage.getItem("authToken"),
-                    product.price
+                    newPrice,
+                    product.product_id
                 );
                 if (success) {
                     addToast({
                         title: "Item bought",
-                        description: "We've notified the seller about your bid."
+                        description: "We've notified the seller that you want to buy this item.",
+                        color: "primary"
                     });
                 } else {
                     addToast({
                         title: "An error occurred",
                         description: "Please try again.",
                         color: "danger"
-                    })
+                    });
                 }
             }
         }}>

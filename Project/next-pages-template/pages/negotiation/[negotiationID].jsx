@@ -1,8 +1,12 @@
 import { Navbar } from "@/components/navbar";
 import { Avatar, Button, Card, CardBody, CardHeader, Link } from "@heroui/react";
+import { useState } from "react";
 import { title } from "@/components/primitives";
 
 export default function Negotiation() {
+    const [loading, setLoading] = useState([false, false, false]);
+    // first button - accept, second button - decline, third button - block user
+
     return <>
         <Navbar />
         <div className="flex flex-col items-center m-16 ">
@@ -18,9 +22,9 @@ export default function Negotiation() {
                     </p>
 
                     <div className="flex gap-2 p-2">
-                        <Button color="success">Accept</Button>
-                        <Button color="danger">Decline</Button>
-                        <Button color="danger" variant="flat">Block User</Button>
+                        <Button color="success" isLoading={loading[0]} onPress={() => {setLoading([true, false, false])}}>Accept</Button>
+                        <Button color="danger" isLoading={loading[1]} onPress={() => {setLoading([false, true, false])}}>Decline</Button>
+                        <Button color="danger" variant="flat" isLoading={loading[2]} onPress={() => {setLoading([false, false, true])}}>Block User</Button>
                     </div>
                 </CardBody>
             </Card>
