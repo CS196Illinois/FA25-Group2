@@ -8,16 +8,18 @@ export default async function editListing(req, res) {
     }
 
     // get info from req (assuming how it is given)
-    const {token, product_id, user_id, new_name, new_description, new_price, new_image, new_tags, new_sold} = req.query;
+    const {token, product_id, user_id, new_name, new_description, new_price, new_image, new_tags, new_sold} = req.params;
 
     try {
     // check auth and sold status before implementing
         if (!(authorized(token, user_id))) {
             return res.status(401).json({error: 'Invalid token.'})
         }
-        if (new_sold == true) {
+        const sold_status = await pool.query(
+            'SELECT sold FROM products WHERE product_id = $1', [product_id]
+        );
+        if (sold_status == true) {
             return res.status(401).json({error: 'This product has already been sold.'})
-        }
 
     // implement changes
         if (new_name) {

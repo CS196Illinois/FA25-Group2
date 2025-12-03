@@ -7,12 +7,12 @@ export default async function editPfp(req, res) {
     }
 
     // gather info from req (assuming how it is given)
-    const {token, new_bio, new_pfp, id} = req.query;
+    const {token, new_bio, new_pfp, id} = req.params;
     
     try {
     // check auth
         if (!(authorized(token, id))) {
-            return res.status(401).json({error: 'Invalid token.'})
+            return res.status(401).json({error: 'Unauthorized'})
         }
 
     // implement changes
