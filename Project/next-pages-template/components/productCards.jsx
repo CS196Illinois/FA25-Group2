@@ -27,7 +27,7 @@ export default function ProductCards({ products, buy }) {
                         <Link className="text-foreground gap-1" href={`/profile/${product.seller}`}><Avatar size="sm" src={product.pfp} showFallback /> {product.seller}</Link></p>
                 </div>
                 <div className="flex gap-2 mt-8">
-                    {["clothes", "test"].map((tag) => {
+                    {product.tags?.tags.map((tag) => {
                         return <Chip variant="flat" color="primary">{tag}</Chip>
                     })}
                 </div>
