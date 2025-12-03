@@ -7,25 +7,52 @@ import {
   NavbarItem,
   NavbarMenuItem,
 } from "@heroui/navbar";
-import {
-  Dropdown,
-  DropdownTrigger,
-  DropdownMenu,
-  DropdownItem,
-} from "@heroui/dropdown";
-import { Button } from "@heroui/button";
-import { Link } from "@heroui/link";
 import { link as linkStyles } from "@heroui/theme";
 import NextLink from "next/link";
 import clsx from "clsx";
 import { useEffect, useState } from "react";
 import { useRouter } from "next/router";
-import Cookies from "js-cookie";
-
 import { useAppContext } from "@/context/AppContext";
 import { siteConfig } from "@/config/site";
 import { ThemeSwitch } from "@/components/theme-switch";
 import {} from "@/components/icons";
+import { Button, Link, Dropdown, DropdownTrigger, DropdownMenu, DropdownSection, DropdownItem, cn } from "@heroui/react";
+
+export function BellIcon({ color }) {
+  return <Dropdown>
+      <DropdownTrigger>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill={color} className="size-6">
+            <path fillRule="evenodd" d="M5.25 9a6.75 6.75 0 0 1 13.5 0v.75c0 2.123.8 4.057 2.118 5.52a.75.75 0 0 1-.297 1.206c-1.544.57-3.16.99-4.831 1.243a3.75 3.75 0 1 1-7.48 0 24.585 24.585 0 0 1-4.831-1.244.75.75 0 0 1-.298-1.205A8.217 8.217 0 0 0 5.25 9.75V9Zm4.502 8.9a2.25 2.25 0 1 0 4.496 0 25.057 25.057 0 0 1-4.496 0Z" clipRule="evenodd" />
+        </svg>
+      </DropdownTrigger>
+      <DropdownMenu variant="flat">
+        <DropdownSection showDivider>
+          <DropdownItem
+            key="1"
+            description="@ari wants to buy Leather Jacket for $100."
+          >
+            New negotiation request
+          </DropdownItem>
+        </DropdownSection>
+        <DropdownSection showDivider>
+          <DropdownItem
+            key="2"
+            description="@josiah wants to buy Leather Jacket for $100."
+          >
+            New negotiation request
+          </DropdownItem>
+        </DropdownSection>
+        <DropdownSection showDivider>
+          <DropdownItem
+            key="3"
+            description="@kevin wants to buy Leather Jacket for $100."
+          >
+            New negotiation request
+          </DropdownItem>
+        </DropdownSection>
+      </DropdownMenu>
+    </Dropdown>
+}
 
 export const Navbar = () => {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
@@ -78,16 +105,16 @@ export const Navbar = () => {
       >
         <NavbarItem className="hidden sm:flex gap-2">
           <ThemeSwitch />
+          <BellIcon color="#a1a0a9"/>
         </NavbarItem>
 
         <NavbarItem className="hidden md:flex gap-2">
           {isMounted && (isAuthenticated || showSignOutInNavbar) ? (
             <>
-              <NextLink href="/create-listing">
+              <NextLink href="/create">
                 <Button
-                  as={Link}
-                  className="text-sm font-normal text-default-600 bg-default-100"
-                  variant="flat"
+                  color="primary"
+                  className="text-sm font-normal"
                 >
                   Create Listing
                 </Button>
@@ -131,7 +158,7 @@ export const Navbar = () => {
                 </DropdownTrigger>
                 <DropdownMenu aria-label="Account Actions">
                   <DropdownItem key="profile">
-                    <NextLink href="/profile">Profile</NextLink>
+                    <NextLink href={`/profile/${window.localStorage.getItem("username")}`}>Profile</NextLink>
                   </DropdownItem>
                   <DropdownItem key="sign-out" onClick={handleSignOut}>
                     Sign Out
@@ -155,6 +182,7 @@ export const Navbar = () => {
 
       <NavbarContent className="sm:hidden basis-1 pl-4" justify="end">
         <ThemeSwitch />
+        <BellIcon />
         <NavbarMenuToggle />
       </NavbarContent>
 

@@ -19,12 +19,17 @@ export default function ProductCards({ products, buy }) {
                     <p className="text-lg">${parseFloat(product.price).toFixed(2)}</p>
                 </Chip>
             </CardBody>
-            <CardFooter>
+            <CardFooter className="flex flex-col items-start">
                 <div className="flex items-center gap-2">
                     {buy && <BuyButton product={product} />}
 
                     <p className="flex gap-2 items-center">Posted by 
                         <Link className="text-foreground gap-1" href={`/profile/${product.seller}`}><Avatar size="sm" src={product.pfp} showFallback /> {product.seller}</Link></p>
+                </div>
+                <div className="flex gap-2 mt-8">
+                    {["clothes", "test"].map((tag) => {
+                        return <Chip variant="flat" color="primary">{tag}</Chip>
+                    })}
                 </div>
             </CardFooter>
         </Card>

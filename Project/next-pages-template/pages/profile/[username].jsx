@@ -4,7 +4,8 @@ import DefaultLayout from "@/layouts/default";
 import { title } from "@/components/primitives";
 import ProductCards from "@/components/productCards";
 import axios from "axios";
-import { Avatar, Card, CardBody, CardHeader, CardFooter, Button, Textarea } from "@heroui/react";
+import imageCompression from "browser-image-compression";
+import { Input, Avatar, Card, CardBody, CardHeader, CardFooter, Button, Textarea, Link, Modal, ModalBody, ModalContent, ModalHeader, ModalFooter, useDisclosure } from "@heroui/react";
 
 export function PencilIcon({ color }) {
     return <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke={color} className="size-6">
@@ -18,6 +19,7 @@ export default function ProfilePage() {
     const [profile, setProfile] = useState({});
     const [editing, setEditing] = useState(false);
     const [bio, setBio] = useState("");
+    const {isOpen, onOpen, onOpenChange} = useDisclosure();
 
     async function getProfile(username, authToken) {
         const response = await axios.get("/api/profile", {
@@ -66,13 +68,18 @@ export default function ProfilePage() {
         </section>
 
         <section>
+            <PfpModal isOpen={isOpen} onOpenChange={onOpenChange} profile={profile} setProfile={setProfile} />
             <Card className="h-[80vh] p-4">
                 <CardHeader>
                     <h1 className="text-2xl font-semibold">How you'll appear</h1>
                 </CardHeader>
                 <CardBody className="items-center">
                     <div>
-                        <Avatar showFallback src={profile.pfp} className="w-20 h-20" />
+                        {
+                        profile.me ? <Link onPress={onOpen}>
+                                <Avatar showFallback src={profile.pfp} className="w-20 h-20" />
+                            </Link> : <Avatar showFallback src={profile.pfp} className="w-20 h-20" />
+                        }  
                     </div>
 
                     <p className="text-xl font-semibold mt-2 mb-4">@{profile.username}</p>
@@ -112,3 +119,65 @@ export default function ProfilePage() {
     </DefaultLayout>
     );
 }
+
+export function PfpModal({ isOpen, onOpenChange, profile, setProfile }) {
+    const [file, setFile] = useState("");
+    const [loading, setLoading] = useState(false);
+
+    async function updatePfp(user_id, authToken, pfp) {
+
+        let resizedPfpB64;
+
+        if (pfp != "") {
+            const options = {
+                maxSizeMB: 0.5,
+                maxWidthOrHeight: 800,
+                useWebWorker: true
+            }
+            const resizedPfp = await imageCompression(pfp, options)
+            const reader = new FileReader()
+            resizedPfpB64 = await new Promise(r=>{reader.onload=()=>r(reader.result.split(",")[1]);reader.readAsDataURL(resizedPfp)})
+        }
+
+        const response = await axios.post("/api/updatePfp", {
+            user_id,
+            authToken,
+            pfp: resizedPfpB64 || ""
+        }, {
+            headers: {
+                Authorization: `Bearer ${authToken}`
+            }
+        });
+
+        return response.data;
+    }
+
+    return <Modal isOpen={isOpen} onOpenChange={onOpenChange}>
+        <ModalContent>
+            {(onClose) => (
+                <>
+                    <ModalHeader>
+                        <h1 className="text-2xl font-bold">Edit profile picture</h1>
+                    </ModalHeader>
+                    <ModalBody>
+                        <Input type="file" onChange={(e) => {
+                            setFile(e.target.files[0]);
+                        }} />
+                    </ModalBody>
+                    <ModalFooter>
+                        <Button color="primary" isLoading={loading} onPress={async () => {
+                            setLoading(true);
+                            const result = await updatePfp(profile.user_id, window.localStorage.getItem("authToken"), file);
+                            setProfile({...profile, pfp: result.pfp});
+                            setLoading(false);
+                            onClose();
+                        }}>Change</Button>
+                        <Button onPress={onClose} color="danger" variant="faded">Cancel</Button>
+                    </ModalFooter>
+                </>
+            )}
+        </ModalContent>
+    </Modal>
+}
+
+
