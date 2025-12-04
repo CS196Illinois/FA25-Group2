@@ -126,7 +126,7 @@ export function BuyButton({ product }) {
                 const success = await buy(
                     window.localStorage.getItem("username"),
                     window.localStorage.getItem("authToken"),
-                    newPrice,
+                    product.price,
                     product.product_id
                 );
                 if (success) {
