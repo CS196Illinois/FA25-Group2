@@ -1,58 +1,109 @@
 import { Navbar } from "@/components/navbar";
-import { useState } from "react";
-import { useEffect } from "react";
+import { useState, useEffect } from "react";
 import ProductCards from "@/components/productCards";
 import axios from "axios";
-import FilterSidebar from "@/components/FilterSidebar";
+import { ToastProvider, Input, Button, Card, CardBody } from "@heroui/react";
 
 export default function Marketplace() {
-    async function getProducts(filters = {}) {
-        const params = {};
+    const [products, setProducts] = useState([]);
+    const [search, setSearch] = useState("");
+    const [minPrice, setMinPrice] = useState("");
+    const [maxPrice, setMaxPrice] = useState("");
 
-        if (filters.search) params.q = filters.search;
-        if (filters.minPrice !== undefined) params.minPrice = filters.minPrice;
-        if (filters.maxPrice !== undefined) params.maxPrice = filters.maxPrice;
-        if (filters.tags && filters.tags.length > 0) params.tags = filters.tags.join(',');
+    async function getProducts() {
+        try {
+            const params = {};
+            if (search) params.search = search;
+            if (minPrice) params.minPrice = minPrice;
+            if (maxPrice) params.maxPrice = maxPrice;
 
-        const result = await axios.get("/api/products", { params });
-        return result.data.products;
+            const result = await axios.get("/api/products", { params });
+            setProducts(result.data.products);
+        } catch (error) {
+            console.error(error);
+        }
     }
 
-    const [products, setProducts] = useState([]);
-
-    const handleFilterUpdate = async (newFilters) => {
-        const filteredProducts = await getProducts(newFilters);
-        setProducts(filteredProducts);
-    };
-
     useEffect(() => {
-        async function x() {
-            const products = await getProducts();
-            setProducts(products);
-        }
-
-        x();
+        getProducts();
     }, []);
 
-    return <>
-        <Navbar />
-        <div className="mt-8 container mx-auto px-4 flex gap-8">
+    return (
+        <>
+            <Navbar />
+            <ToastProvider placement="top-center" toastOffset={60} />
             
-            <aside className="hidden md:block">
-                <FilterSidebar onUpdate={handleFilterUpdate} />
-            </aside>
+            <div className="flex flex-col md:flex-row p-6 gap-6 max-w-7xl mx-auto min-h-screen">
+                <div className="w-full md:w-1/4 min-w-[250px]">
+                    <Card className="sticky top-24">
+                        <CardBody className="gap-6 p-6">
+                            <h2 className="text-xl font-bold">Filters</h2>
+                            
+                            <div>
+                                <p className="text-sm font-semibold mb-2 text-default-500">Search</p>
+                                <Input 
+                                    placeholder="Product name..." 
+                                    value={search} 
+                                    onValueChange={setSearch}
+                                    isClearable
+                                    onClear={() => setSearch("")}
+                                />
+                            </div>
 
-            
-            <div className="flex-1">
-                <div className="flex flex-col items-center md:items-start">
-                    <h1 className="text-5xl font-semibold mb-8">What deals will you discover?</h1>
-                    
-                    
-                    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 w-full">
-                        <ProductCards products={products} buy />
+                            <div>
+                                <p className="text-sm font-semibold mb-2 text-default-500">Price Range</p>
+                                <div className="flex gap-2 items-center">
+                                    <Input 
+                                        type="number" 
+                                        placeholder="Min" 
+                                        startContent={<span className="text-default-400 text-small">$</span>}
+                                        value={minPrice} 
+                                        onValueChange={setMinPrice}
+                                    />
+                                    <span className="text-default-400">-</span>
+                                    <Input 
+                                        type="number" 
+                                        placeholder="Max" 
+                                        startContent={<span className="text-default-400 text-small">$</span>}
+                                        value={maxPrice} 
+                                        onValueChange={setMaxPrice}
+                                    />
+                                </div>
+                            </div>
+
+                            <div className="flex flex-col gap-2 mt-2">
+                                <Button color="primary" onPress={getProducts}>
+                                    Apply Filters
+                                </Button>
+                                <Button variant="light" onPress={() => {
+                                    setSearch("");
+                                    setMinPrice("");
+                                    setMaxPrice("");
+                                    window.location.reload(); 
+                                }}>
+                                    Reset
+                                </Button>
+                            </div>
+                        </CardBody>
+                    </Card>
+                </div>
+
+                <div className="w-full md:w-3/4">
+                    <div className="flex flex-col items-center">
+                        <h1 className="text-4xl font-semibold mb-8 self-start">What deals will you discover?</h1>
+                        
+                        {products.length === 0 ? (
+                            <div className="mt-12 text-default-500 text-lg">
+                                No products found matching your filters.
+                            </div>
+                        ) : (
+                            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 w-full">
+                                <ProductCards products={products} buy />
+                            </div>
+                        )}
                     </div>
                 </div>
             </div>
-        </div>
-    </>
+        </>
+    );
 }
