@@ -46,7 +46,7 @@ export default async function handler(req, res) {
         const productName = productRes.rows[0].name;
 
 
-        const message = `User wants to buy ${productName} for ${price}`;
+        const message = `${sender} wants to buy ${productName} for $${price}`;
 
        
         await pool.query(

@@ -4,8 +4,8 @@ import DefaultLayout from "@/layouts/default";
 import { title } from "@/components/primitives";
 import ProductCards from "@/components/productCards";
 import axios from "axios";
+import { Input, Modal, ModalContent, ModalHeader, ModalBody, ModalFooter, useDisclosure, Link, Avatar, Card, CardBody, CardHeader, CardFooter, Button, Textarea } from "@heroui/react";
 import imageCompression from "browser-image-compression";
-import { Input, Avatar, Card, CardBody, CardHeader, CardFooter, Button, Textarea, Link, Modal, ModalBody, ModalContent, ModalHeader, ModalFooter, useDisclosure } from "@heroui/react";
 
 export function PencilIcon({ color }) {
     return <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke={color} className="size-6">
@@ -55,6 +55,7 @@ export default function ProfilePage() {
     return (
     <DefaultLayout>
         <div className="flex justify-between">
+        {profile.me ? <div className="flex justify-between">
         <section className="flex flex-col items-center gap-4 py-8 md:py-10 w-[65vw]">
             <div className="inline-block max-w-lg text-center justify-center">
                 <h1 className={title()}>Welcome back, {username}</h1>
@@ -115,6 +116,28 @@ export default function ProfilePage() {
                 </CardBody>
             </Card>
         </section>
+        </div> : <div className="flex justify-center w-full">
+        <section className="w-full">
+            <div className="flex flex-col items-center">
+                <div>
+                    <Avatar showFallback src={profile.pfp} className="w-30 h-30" />
+                </div>
+
+                <p className="text-3xl font-semibold mt-2 mb-4">@{profile.username}</p>
+                <div>
+                    <div className="flex gap-2 items-center">
+                        <p>{bio || ""}</p>
+                    </div>
+                </div>
+            </div>
+
+            <p className="text-3xl font-semibold mb-4 mt-8">Listed Products</p>
+
+            <div className="grid grid-cols-3 gap-4">
+                <ProductCards products={profile?.forSale || []} />
+            </div>
+        </section>
+        </div> }
         </div>
     </DefaultLayout>
     );
@@ -179,5 +202,4 @@ export function PfpModal({ isOpen, onOpenChange, profile, setProfile }) {
         </ModalContent>
     </Modal>
 }
-
 

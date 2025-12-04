@@ -143,7 +143,7 @@ export default function CreateListingPage() {
             fullWidth
             disabled={loading}
             label="Price"
-            placeholder="e.g., 45.00"
+            placeholder="e.g., 45.67"
             type="number"
             value={price}
             onChange={(e) => setPrice(e.target.value)}
