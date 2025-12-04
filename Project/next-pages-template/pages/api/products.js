@@ -7,5 +7,8 @@ export default async function handler(req, res) {
 
     let productResult = (await pool.query("SELECT p.product_id, p.name, p.description, p.price, p.image, p.tags, u.username as seller, u.pfp FROM products p NATURAL JOIN users u")).rows;
     
+    //      UNCOMMENT        In future, when we want only unsold items to appear on marketplace page:
+    // let productResult = (await pool.query("SELECT p.product_id, p.name, p.description, p.price, p.image, p.tags, u.username as seller, u.pfp FROM products p NATURAL JOIN users u WHERE p.sold = false")).rows;
+
     res.status(200).json({products: productResult});
 }

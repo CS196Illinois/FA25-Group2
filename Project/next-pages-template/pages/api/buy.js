@@ -6,11 +6,32 @@ export default async function handler(req, res) {
     return res.status(405).json({ error: "Method not allowed" });
   }
 
-  try {
-    const data = req.body?.params || req.body || {};
-    const { username, authToken, price, product_id } = data;
+  const { username, authToken, price, product_id } = req.body;
 
-  
+  /*   UNCOMMENT   Can't buy your own item code, but will need this feature to debug, so I'll comment it out for now
+
+  const username_check_result = await pool.query(
+    'SELECT u.username FROM products p NATURAL JOIN users u WHERE p.product_id = $1 AND p.user_id = u.user_id', [product_id]
+  );
+  const username_check = username_check_result.rows[0].username;
+  if (username == username_check) {
+    console.log("Dude, that's your own item...");
+    return res.status(400).json({error: "You cannot buy your own item."})
+  };
+
+  */
+
+  // cant buy if alr sold
+  const sold_result = await pool.query(
+    'SELECT sold FROM products WHERE product_id = $1', [product_id]
+  );
+  const sold = sold_result.rows[0].sold;
+  if (sold == true) {
+    console.log("Yo this item sold already");
+    return res.status(400).json({error: "This item is already sold."})
+  };
+
+  try {
     if (!username || !authToken) {
       return res.status(401).json({ error: "Missing credentials" });
     }

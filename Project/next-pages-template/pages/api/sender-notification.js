@@ -21,8 +21,7 @@ export default async function handler(req, res) {
     );
     const seller_id = seller_result.rows[0].user_id;
 
-
-    console.log('Seller id: ', seller_id, "\nSender id: ", sender_id);
+    
 
 
     // check seller authorization
@@ -35,6 +34,9 @@ export default async function handler(req, res) {
     let message;
     if (choice == 'accepted') {
         message = seller_username + " has accepted your negotiation request!\n" + userMessage;
+        await pool.query(
+            'UPDATE products p SET sold = true FROM negotiations n WHERE n.product_id = p.product_id AND n.negotiation_id = $1', [negotiation_id]
+        );
     } else if (choice == 'rejected') {
         message = seller_username + " has declined your negotiation offer.\n" + userMessage;
     } else if (choice == 'blocked') {
