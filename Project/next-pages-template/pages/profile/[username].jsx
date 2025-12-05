@@ -20,6 +20,7 @@ export default function ProfilePage() {
     const [editing, setEditing] = useState(false);
     const [bio, setBio] = useState("");
     const {isOpen, onOpen, onOpenChange} = useDisclosure();
+    const [notifications, setNotifications] = useState([]);
 
     async function getProfile(username, authToken) {
         const response = await axios.get("/api/profile", {
@@ -31,6 +32,15 @@ export default function ProfilePage() {
 
         return response.data;
     }
+
+    async function getNotifications(username, authToken) {
+    try {
+        const res = await axios.get("/api/notifications", { params: { username, authToken } });
+        setNotifications(res.data.notifications || []);
+    } catch (e) {
+        console.error(e);
+    }
+}
 
     async function updateBio(user_id, authToken, bio) {
         await axios.post("/api/updateBio", {
@@ -44,9 +54,14 @@ export default function ProfilePage() {
         if (!router.isReady) return;
 
         async function x(username) {
-            const profile = await getProfile(username, window.localStorage.getItem("authToken"));
+            const authToken = window.localStorage.getItem("authToken");
+            const profile = await getProfile(username, authToken);
             setProfile(profile);
             setBio(profile.bio);
+
+            if (profile.me) {
+                getNotifications(username, authToken);
+            }
         }
 
         x(username);
@@ -108,6 +123,38 @@ export default function ProfilePage() {
                             </CardFooter>
                         </Card>
                     </div>
+
+                    {profile.me && notifications && notifications.length > 0 && (
+                        <div className="w-full mb-6 border-b-1 pb-4 border-default-200">
+                            <p className="text-xl font-bold text-danger mb-3">🔔 Pending Requests</p>
+                            <div className="flex flex-col gap-2">
+                                {notifications.map((n) => (
+                                    <Card key={n.negotiation_id} className="bg-default-100 shadow-sm">
+                                        <CardBody className="py-2 px-3 flex flex-row justify-between items-center">
+                                            <div className="flex flex-col">
+                                                <span className="font-semibold text-sm">
+                                                    @{n.buyer} offers <span className="text-success font-bold">${n.offer_price}</span>
+                                                </span>
+                                                <span className="text-xs text-default-500 truncate max-w-[150px]">
+                                                    for {n.product_name}
+                                                </span>
+                                            </div>
+                                            <Button 
+                                                size="sm" 
+                                                color="primary" 
+                                                variant="solid"
+                                                className="min-w-[60px] h-8"
+                                                onPress={() => router.push(`/negotiation/${n.negotiation_id}`)}
+                                            >
+                                                View
+                                            </Button>
+                                        </CardBody>
+                                    </Card>
+                                ))}
+                            </div>
+                        </div>
+                    )}
+                    
                     <p className="text-2xl font-bold my-4">Listed Products</p>
                     <div className="grid grid-cols-1 gap-4">
                         <ProductCards products={profile?.forSale || []} profile={profile} />
