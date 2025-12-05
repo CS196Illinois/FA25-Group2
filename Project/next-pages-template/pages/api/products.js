@@ -5,10 +5,38 @@ export default async function handler(req, res) {
         return res.status(405).json({ error: 'Method not allowed' }); 
     }
 
-    let productResult = (await pool.query("SELECT p.product_id, p.name, p.description, p.price, p.image, p.tags, u.username as seller, u.pfp FROM products p NATURAL JOIN users u")).rows;
-    
-    //      UNCOMMENT        In future, when we want only unsold items to appear on marketplace page:
-    // let productResult = (await pool.query("SELECT p.product_id, p.name, p.description, p.price, p.image, p.tags, u.username as seller, u.pfp FROM products p NATURAL JOIN users u WHERE p.sold = false")).rows;
+    const { minPrice, maxPrice, search } = req.query;
 
-    res.status(200).json({products: productResult});
+    let queryText = `
+        SELECT p.product_id, p.name, p.description, p.price, p.image, u.username as seller, u.pfp 
+        FROM products p 
+        NATURAL JOIN users u 
+        WHERE 1=1
+    `;
+    
+    const queryParams = [];
+    let paramIndex = 1;
+
+    if (minPrice) {
+        queryText += ` AND p.price >= $${paramIndex++}`;
+        queryParams.push(minPrice);
+    }
+    if (maxPrice) {
+        queryText += ` AND p.price <= $${paramIndex++}`;
+        queryParams.push(maxPrice);
+    }
+
+    if (search) {
+        queryText += ` AND (p.name ILIKE $${paramIndex} OR p.description ILIKE $${paramIndex})`;
+        queryParams.push(`%${search}%`); 
+        paramIndex++;
+    }
+
+    try {
+        const productResult = (await pool.query(queryText, queryParams)).rows;
+        res.status(200).json({ products: productResult });
+    } catch (err) {
+        console.error("FILTER ERROR:", err);
+        res.status(500).json({ error: "Database error" });
+    }
 }

@@ -1,3 +1,4 @@
+'use client';
 import pool from "./db";
 import authorized from "./authorized";
 
@@ -24,10 +25,13 @@ export default async function handler(req, res) {
             'SELECT * FROM notifications WHERE recipient = $1 ORDER BY created_at DESC', [user_id]
         );
 
+        const first = notifications_result.rows[0];
+        const read = first.read;
+
         await pool.query(
             "UPDATE notifications SET read = TRUE WHERE recipient = $1 AND read = FALSE", [user_id]
         )
-        res.status(200).json({message: 'Succesfully grabbed notifications', notifications: notifications_result.rows})
+        return res.status(200).json({message: 'Succesfully grabbed notifications', notifications: notifications_result.rows, read})
     } catch (error) {
         res.status(500).json({error})
     }

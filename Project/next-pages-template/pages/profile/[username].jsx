@@ -20,6 +20,7 @@ export default function ProfilePage() {
     const [editing, setEditing] = useState(false);
     const [bio, setBio] = useState("");
     const {isOpen, onOpen, onOpenChange} = useDisclosure();
+    const [notifications, setNotifications] = useState([]);
 
     async function getProfile(username, authToken) {
         const response = await axios.get("/api/profile", {
@@ -31,6 +32,15 @@ export default function ProfilePage() {
 
         return response.data;
     }
+
+    async function getNotifications(username, authToken) {
+    try {
+        const res = await axios.get("/api/notifications", { params: { username, authToken } });
+        setNotifications(res.data.notifications || []);
+    } catch (e) {
+        console.error(e);
+    }
+}
 
     async function updateBio(user_id, authToken, bio) {
         await axios.post("/api/updateBio", {
@@ -44,9 +54,14 @@ export default function ProfilePage() {
         if (!router.isReady) return;
 
         async function x(username) {
-            const profile = await getProfile(username, window.localStorage.getItem("authToken"));
+            const authToken = window.localStorage.getItem("authToken");
+            const profile = await getProfile(username, authToken);
             setProfile(profile);
             setBio(profile.bio);
+
+            if (profile.me) {
+                getNotifications(username, authToken);
+            }
         }
 
         x(username);
@@ -63,7 +78,7 @@ export default function ProfilePage() {
             <div className="w-full max-w-4xl">
                 <p className="text-3xl font-semibold mb-4 mt-8">Your Recent Purchases</p>
                 <div className="grid grid-cols-3 gap-4">
-                    <ProductCards products={profile?.purchases || []} />
+                    <ProductCards products={profile?.purchases || []} profile={profile} />
                 </div>
             </div>
         </section>
@@ -78,12 +93,12 @@ export default function ProfilePage() {
                     <div>
                         {
                         profile.me ? <Link onPress={onOpen}>
-                                <Avatar showFallback src={profile.pfp} className="w-20 h-20" />
-                            </Link> : <Avatar showFallback src={profile.pfp} className="w-20 h-20" />
+                                <Avatar showFallback src={profile?.pfp} className="w-20 h-20" />
+                            </Link> : <Avatar showFallback src={profile?.pfp} className="w-20 h-20" />
                         }  
                     </div>
 
-                    <p className="text-xl font-semibold mt-2 mb-4">@{profile.username}</p>
+                    <p className="text-xl font-semibold mt-2 mb-4">@{profile?.username}</p>
                     <div className={editing ? "hidden" : ""}>
                         <div className="flex gap-2 items-center">
                             <p>{bio || (profile.me ? "Add a bio" : "")}</p>
@@ -108,10 +123,10 @@ export default function ProfilePage() {
                             </CardFooter>
                         </Card>
                     </div>
+                    
                     <p className="text-2xl font-bold my-4">Listed Products</p>
-
                     <div className="grid grid-cols-1 gap-4">
-                        <ProductCards products={profile?.forSale || []} />
+                        <ProductCards products={profile?.forSale || []} profile={profile} />
                     </div>
                 </CardBody>
             </Card>
@@ -120,10 +135,10 @@ export default function ProfilePage() {
         <section className="w-full">
             <div className="flex flex-col items-center">
                 <div>
-                    <Avatar showFallback src={profile.pfp} className="w-30 h-30" />
+                    <Avatar showFallback src={profile?.pfp} className="w-30 h-30" />
                 </div>
 
-                <p className="text-3xl font-semibold mt-2 mb-4">@{profile.username}</p>
+                <p className="text-3xl font-semibold mt-2 mb-4">@{profile?.username}</p>
                 <div>
                     <div className="flex gap-2 items-center">
                         <p>{bio || ""}</p>
@@ -134,7 +149,7 @@ export default function ProfilePage() {
             <p className="text-3xl font-semibold mb-4 mt-8">Listed Products</p>
 
             <div className="grid grid-cols-3 gap-4">
-                <ProductCards products={profile?.forSale || []} />
+                <ProductCards products={profile?.forSale || []} profile={profile} />
             </div>
         </section>
         </div> }
