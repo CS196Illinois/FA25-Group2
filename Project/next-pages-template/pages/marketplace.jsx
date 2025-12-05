@@ -2,8 +2,7 @@ import { Navbar } from "@/components/navbar";
 import { useState, useEffect } from "react";
 import ProductCards from "@/components/productCards";
 import axios from "axios";
-import { ToastProvider } from "@heroui/react";
-import DefaultLayout from "../layouts/default";
+import { ToastProvider, Card, CardBody, Input, Button } from "@heroui/react";
 
 export default function Marketplace() {
     const [products, setProducts] = useState([]);
@@ -34,9 +33,9 @@ export default function Marketplace() {
             <Navbar />
             <ToastProvider placement="top-center" toastOffset={60} />
             
-            <div className="flex flex-col md:flex-row p-6 gap-6 max-w-7xl mx-auto min-h-screen">
+            <div className="flex flex-col md:flex-row p-6 gap-6 max-w-7xl ml-8 min-h-screen">
                 <div className="w-full md:w-1/4 min-w-[250px]">
-                    <Card className="sticky top-24">
+                    <Card className="sticky top-40 mr-8">
                         <CardBody className="gap-6 p-6">
                             <h2 className="text-xl font-bold">Filters</h2>
                             
@@ -76,7 +75,7 @@ export default function Marketplace() {
                                 <Button color="primary" onPress={getProducts}>
                                     Apply Filters
                                 </Button>
-                                <Button variant="light" onPress={() => {
+                                <Button variant="light" color="danger" onPress={() => {
                                     setSearch("");
                                     setMinPrice("");
                                     setMaxPrice("");
