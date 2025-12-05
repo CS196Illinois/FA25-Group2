@@ -33,8 +33,7 @@ export default async function handler(req, res) {
       return res.status(500).json({ error: "Invalid price" });
     }
 
-    /*   UNCOMMENT   Can't buy your own item code, but will need this feature to debug, so I'll comment it out for now
-
+    // user cannot buy own item
     const username_check_result = await pool.query(
       'SELECT u.username FROM products p NATURAL JOIN users u WHERE p.product_id = $1 AND p.user_id = u.user_id', [product_id]
     );
@@ -43,8 +42,6 @@ export default async function handler(req, res) {
       console.log("Dude, that's your own item...");
       return res.status(400).json({error: "You cannot buy your own item."})
     };
-    
-    */
 
     // cant buy if alr sold
     const sold_result = await pool.query(
