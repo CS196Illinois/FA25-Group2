@@ -109,8 +109,11 @@ export default function AuthPage() {
         }
         const data = result.data;
 
-        //setSignUpError(data.error || "Something went wrong");
+        setSignUpError(data.error || "Something went wrong");
 
+        if (result.status === 400) {
+          setSignUpError("Please provide an '@illinois.edu' email.");
+        }
       }
     } catch (error) {
       console.log(error)

@@ -21,10 +21,11 @@ export default async function handler(req, res) {
 
     try {
         const notifications_result = await pool.query(
-            'SELECT * FROM notifications WHERE recipient = $1', [user_id]
+            'SELECT * FROM notifications WHERE recipient = $1 ORDER BY created_at DESC', [user_id]
         );
+
         await pool.query(
-            'UPDATE notifications SET read = true WHERE recipient = $1 AND read = false', [user_id]
+            "UPDATE notifications SET read = TRUE WHERE recipient = $1 AND read = FALSE", [user_id]
         )
         res.status(200).json({message: 'Succesfully grabbed notifications', notifications: notifications_result.rows})
     } catch (error) {

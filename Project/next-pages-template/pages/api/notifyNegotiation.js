@@ -46,7 +46,7 @@ export default async function handler(req, res) {
         const productName = productRes.rows[0].name;
 
 
-        const message = `User wants to buy ${productName} for ${price}`;
+        const message = `${sender} wants to buy ${productName} for $${price}`;
 
         const blocked_result = await pool.query(
             'SELECT blocked_id FROM blocklist WHERE user_id = $1', [seller]
