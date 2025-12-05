@@ -18,6 +18,11 @@ export default async function handler(req, res) {
     return res.status(400).json({ error: "Email, username, and password are required" }); 
   }
 
+  if (!(email.includes("@illinois.edu"))) {
+    console.log("Email didn't have @illinois.edu")
+    return res.status(400).json({error: "Please provide an '@illinois.edu' email"})    
+  };
+
   try {
     const hashedPassword = await bcrypt.hash(password, 10);
     

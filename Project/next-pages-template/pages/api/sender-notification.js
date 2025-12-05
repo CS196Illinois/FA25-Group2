@@ -21,8 +21,7 @@ export default async function handler(req, res) {
     );
     const seller_id = seller_result.rows[0].user_id;
 
-
-    console.log('Seller id: ', seller_id, "\nSender id: ", sender_id);
+    
 
 
     // check seller authorization
@@ -35,15 +34,19 @@ export default async function handler(req, res) {
     let message;
     if (choice == 'accepted') {
         message = seller_username + " has accepted your negotiation request!\n" + userMessage;
+        await pool.query(
+            'UPDATE products p SET sold = true FROM negotiations n WHERE n.product_id = p.product_id AND n.negotiation_id = $1', [negotiation_id]
+        );
     } else if (choice == 'rejected') {
         message = seller_username + " has declined your negotiation offer.\n" + userMessage;
     } else if (choice == 'blocked') {
         message = seller_username + " has declined your negotiation offer.\n" + userMessage;
+        await pool.query(
+            'INSERT INTO blocklist VALUES (user_id = $1, blocked_id = $2)', [seller_id, sender_id]
+        );
     } else {
         res.status(500).json({message: "Expected a choice of 'accepted', 'rejected', or 'blocked' but got: " + choice})
     }
-            // Add user to block list
-
 
     // change negotiation status to db, then add notification if choice is 'accepted' or 'rejected'
     try {
@@ -56,7 +59,7 @@ export default async function handler(req, res) {
             'UPDATE negotiations SET status = $1 WHERE product_id = $2', [choice, product_id]
         );
 
-        const notifications_result = await pool.query(
+        await pool.query(
             'INSERT INTO notifications (recipient, sender, product_id, message, read, created_at, link) VALUES ($1, $2, $3, $4, false, NOW(), NULL)', [sender_id, seller_id, product_id, message]
         );
         
