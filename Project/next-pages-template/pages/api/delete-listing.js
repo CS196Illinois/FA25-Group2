@@ -11,7 +11,7 @@ export default async function handler(req, res) {
 
     //authorize
     const user_id_result = await pool.query(
-        'SELECT u.user_id FROM products WHERE product_id = $1', [product_id]
+        'SELECT user_id FROM products WHERE product_id = $1', [product_id]
     );
     const user_id = user_id_result.rows[0].user_id;
     if (!(authorized(authToken, user_id))) {
@@ -19,16 +19,17 @@ export default async function handler(req, res) {
         };
 
     //ensure owner & unsold
-    const {username_check_result, sold_result} = await pool.query(
-        'SELECT u.username, p.sold FROM users u NATURAL JOIN products p WHERE u.user_id = p.user_id AND product_id = $2', [product_id] 
+    const checkResult = await pool.query(
+        'SELECT u.username, p.sold FROM users u NATURAL JOIN products p WHERE u.user_id = p.user_id AND product_id = $1', [product_id] 
     ); 
-    const username_check = username_check_result.rows[0].username;
-    if (username == username_check) {
-        console.log('The user did not post this item, so they cant delete it');
+    const username_check = checkResult.rows[0].username;
+    
+    if (username != username_check) {
+        console.log('The user did not post this item, so they can\'t delete it');
         return res.status(400).json({error: 'This item was not posted by you.'});
     };
-    const sold = sold_result.rows[0].sold;
-    if (sold == true) {
+    const sold = checkResult.rows[0].sold;
+    if (sold) {
         return res.status(400).json({error: "This item has already been sold"});
     };
 

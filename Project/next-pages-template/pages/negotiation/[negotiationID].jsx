@@ -76,6 +76,7 @@ export default function Negotiation() {
                                 message
                             );
                             setLoading([false, false, false]);
+                            router.push("/marketplace");
                         }}>Accept</Button>
                         <Button color="danger" isLoading={loading[1]} onPress={async () =>  {
                             setLoading([false, true, false]);
@@ -87,6 +88,7 @@ export default function Negotiation() {
                                 message
                             );
                             setLoading([false, false, false]);
+                            router.push("/marketplace");
                         }}>Decline</Button>
                         <Button color="danger" variant="flat" isLoading={loading[2]} onPress={async () =>  {
                             setLoading([false, false, true]);
@@ -98,6 +100,7 @@ export default function Negotiation() {
                                 message
                             );
                             setLoading([false, false, false]);
+                            router.push("/marketplace");
                         }}>Block User</Button>
                     </div>
                 </CardBody>

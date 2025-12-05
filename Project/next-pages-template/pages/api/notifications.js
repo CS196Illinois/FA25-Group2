@@ -27,7 +27,6 @@ export default async function handler(req, res) {
 
         const first = notifications_result.rows[0];
         const read = first.read;
-        console.log(read, first);
 
         await pool.query(
             "UPDATE notifications SET read = TRUE WHERE recipient = $1 AND read = FALSE", [user_id]
