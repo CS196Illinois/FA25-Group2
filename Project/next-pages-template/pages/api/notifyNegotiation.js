@@ -48,12 +48,17 @@ export default async function handler(req, res) {
 
         const message = `${sender} wants to buy ${productName} for $${price}`;
 
-       
-        await pool.query(
-            `INSERT INTO notifications (recipient, sender, product_id, message, read, created_at, link)
-             VALUES ($1, $2, $3, $4, false, NOW(), $5)`,
-            [seller, sender_id, product_id, message, `/negotiation/${negotiation_id}`]
-        );
+        const blocked_result = await pool.query(
+            'SELECT blocked_id FROM blocklist WHERE user_id = $1', [seller]
+        ); 
+        const blocked_list = blocked_result.rows;
+        if (!blocked_list.includes(sender_id)) {
+            await pool.query(
+                `INSERT INTO notifications (recipient, sender, product_id, message, read, created_at, link)
+                    VALUES ($1, $2, $3, $4, false, NOW(), $5)`,
+                [seller, sender_id, product_id, message, `/negotiation/${negotiation_id}`]
+            );
+        }
 
         return res.status(200).json({
             success: true,
@@ -65,4 +70,3 @@ export default async function handler(req, res) {
         return res.status(500).json({ error: "Internal server error" });
     }
 }
-
