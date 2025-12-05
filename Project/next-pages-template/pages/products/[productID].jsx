@@ -1,9 +1,10 @@
 import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
 import axios from "axios";
-import { Avatar, Image, Link } from "@heroui/react";
+import { Chip, Avatar, Image, Link } from "@heroui/react";
 import { BuyButton } from "../../components/productCards";
 import { ToastProvider } from "@heroui/react";
+import DefaultLayout from "../../layouts/default";
 
 export default function ProductPage() {
     const router = useRouter();
@@ -13,7 +14,7 @@ export default function ProductPage() {
     console.log(productID);
 
     async function fetchProduct(productID) {
-        const response = await axios.get("/product", {
+        const response = await axios.get("/api/product", {
             params: {
                 productID
             }
@@ -26,29 +27,32 @@ export default function ProductPage() {
         if (!router.isReady) return;
 
         async function x() {
-            // setProduct(await fetchProduct(productID));
+            setProduct(await fetchProduct(productID));
         }
 
         x();
     }, [router]);
 
-    return <div className="m-20">
+    return <DefaultLayout>
         <ToastProvider placement="top-center"></ToastProvider>
 
-        <h1 className="text-6xl font-bold mb-2">Product Name</h1>
+        <h1 className="text-6xl font-bold mb-2">{product.name}</h1>
         
         <p className="flex gap-2 items-center mb-16 text-2xl">Posted by 
-            <Link className="text-foreground text-2xl gap-2" href={`/profile/${product.seller}`}><Avatar size="md" src={product.pfp} showFallback /> ari{product.seller}</Link></p>
+            <Link className="text-foreground text-2xl gap-2" href={`/profile/${product.seller}`}><Avatar size="md" src={product.pfp} showFallback /> {product.seller}</Link></p>
 
         <div className="flex gap-4">
-            <Image width="1000" height="1000" className="mb-4" src="https://i.redd.it/o44ltaqwatmd1.jpeg"></Image>
+            <Image width="600" height="600" className="mb-4" src={product.image}></Image>
 
-            <div>
-                <p className="text-xl mb-4">Lorem ipsum dolor sit amet consectetur adipisicing elit. Sapiente voluptatem, consequuntur expedita doloribus tempora ex facilis deleniti ab vitae reprehenderit libero atque earum, temporibus delectus recusandae! Vel cum sapiente praesentium?</p>
+            <div className="flex flex-col">
+                <p className="text-xl mb-4">{product.description}</p>
+                <Chip variant="flat" color="success" className="mb-4" radius="sm">
+                    <p className="text-lg">${parseFloat(product.price).toFixed(2)}</p>
+                </Chip>
                 <BuyButton product={product} />
             </div>
         </div>
 
         
-    </div>;
+    </DefaultLayout>;
 }

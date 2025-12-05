@@ -1,7 +1,6 @@
 import { useState } from "react";
 import { useRouter } from "next/router";
-import { Input } from "@heroui/input";
-import { Button } from "@heroui/button";
+import { Input, Button, Chip } from "@heroui/react";
 import { useMemo } from "react";
 import axios from "axios";
 import DefaultLayout from "@/layouts/default";
@@ -143,7 +142,7 @@ export default function CreateListingPage() {
             fullWidth
             disabled={loading}
             label="Price"
-            placeholder="e.g., 45.67"
+            placeholder="e.g., 45.00"
             type="number"
             value={price}
             onChange={(e) => setPrice(e.target.value)}
@@ -177,11 +176,11 @@ export default function CreateListingPage() {
               }}
             />
             {suggestions.length > 0 && (
-              <div className="absolute z-10 w-full bg-white border border-gray-300 rounded-md mt-1 shadow-lg">
+              <div className="absolute z-10 w-full bg-foreground-100 rounded-lg mt-1 shadow-lg overflow-hidden">
                 {suggestions.map((tag) => (
                   <div
                     key={tag}
-                    className="p-2 cursor-pointer hover:bg-gray-100"
+                    className="p-2 cursor-pointer hover:bg-default"
                     role="button"
                     tabIndex={0}
                     onClick={() => handleSuggestionClick(tag)}
@@ -201,32 +200,7 @@ export default function CreateListingPage() {
           {selectedTags.length > 0 && (
             <div className="flex flex-wrap gap-2 mt-2">
               {selectedTags.map((tag) => (
-                <span
-                  key={tag}
-                  className="flex items-center bg-blue-100 text-blue-800 text-sm font-medium px-2.5 py-0.5 rounded-full"
-                >
-                  {tag}
-                  <button
-                    className="ml-1 inline-flex items-center p-0.5 text-blue-400 hover:text-blue-600"
-                    type="button"
-                    onClick={() => handleTagRemove(tag)}
-                  >
-                    <svg
-                      className="w-3 h-3"
-                      fill="none"
-                      stroke="currentColor"
-                      viewBox="0 0 24 24"
-                      xmlns="http://www.w3.org/2000/svg"
-                    >
-                      <path
-                        d="M6 18L18 6M6 6l12 12"
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        strokeWidth="2"
-                      />
-                    </svg>
-                  </button>
-                </span>
+                <Chip color="primary" variant="flat" onClose={() => {handleTagRemove(tag)}}>{tag}</Chip>
               ))}
             </div>
           )}

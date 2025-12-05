@@ -10,18 +10,20 @@ import {
 import { link as linkStyles } from "@heroui/theme";
 import NextLink from "next/link";
 import clsx from "clsx";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import { useRouter } from "next/router";
 import { useAppContext } from "@/context/AppContext";
 import { siteConfig } from "@/config/site";
 import { ThemeSwitch } from "@/components/theme-switch";
 import {} from "@/components/icons";
-import { Spinner, Button, Link, Dropdown, DropdownTrigger, DropdownMenu, DropdownSection, DropdownItem, cn } from "@heroui/react";
+import { Badge, Spinner, Button, Link, Dropdown, DropdownTrigger, DropdownMenu, DropdownSection, DropdownItem, cn } from "@heroui/react";
 import axios from "axios";
 
 export function BellIcon({ color }) {
   const [notifications, setNotifications] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [fetched, setFetched] = useState(false);
+  const [read, setRead] = useState(false);
   const router = useRouter();
   
   async function getNotifications(username, authToken) {
@@ -29,31 +31,38 @@ export function BellIcon({ color }) {
       params: { username, authToken }
     });
 
-    return response.data.notifications;
+    return [response.data.notifications, response.data.read];
   }
 
   useEffect(() => {
+    if (!router.isReady) return;
+    if (fetched) return;
+
     async function x() {
       const response = await getNotifications(
         window.localStorage.getItem("username"),
         window.localStorage.getItem("authToken")
       );
-      setNotifications(response);
+      setNotifications(response[0]);
+      setRead(response[1]);
       setLoading(false);
+      setFetched(true);
     }
 
-    if (!router.isReady) return;
-    if (!loading) return;
     x();
-  }, [router]);
+  }, [router.isReady]);
 
   return <Dropdown>
       <DropdownTrigger>
-        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill={color} className="size-6">
-            <path fillRule="evenodd" d="M5.25 9a6.75 6.75 0 0 1 13.5 0v.75c0 2.123.8 4.057 2.118 5.52a.75.75 0 0 1-.297 1.206c-1.544.57-3.16.99-4.831 1.243a3.75 3.75 0 1 1-7.48 0 24.585 24.585 0 0 1-4.831-1.244.75.75 0 0 1-.298-1.205A8.217 8.217 0 0 0 5.25 9.75V9Zm4.502 8.9a2.25 2.25 0 1 0 4.496 0 25.057 25.057 0 0 1-4.496 0Z" clipRule="evenodd" />
-        </svg>
+          <div className="cursor-pointer mt-2">
+          <Badge color="danger" shape="circle" {...(read ? {} : { content: "" })} className="pointer-events-auto" badgeClass="pointer-events-none">
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill={color} className="size-6">
+                <path fillRule="evenodd" d="M5.25 9a6.75 6.75 0 0 1 13.5 0v.75c0 2.123.8 4.057 2.118 5.52a.75.75 0 0 1-.297 1.206c-1.544.57-3.16.99-4.831 1.243a3.75 3.75 0 1 1-7.48 0 24.585 24.585 0 0 1-4.831-1.244.75.75 0 0 1-.298-1.205A8.217 8.217 0 0 0 5.25 9.75V9Zm4.502 8.9a2.25 2.25 0 1 0 4.496 0 25.057 25.057 0 0 1-4.496 0Z" clipRule="evenodd" />
+              </svg>
+            </Badge>
+          </div>
       </DropdownTrigger>
-      <DropdownMenu variant="flat" disabledKeys={["spinner"]}>
+      <DropdownMenu variant="flat" disabledKeys={["spinner"]} className="max-h-80 overflow-y-auto">
         {loading ? <DropdownItem key="spinner">
           <div className="flex justify-center">
             <Spinner color="foreground" />
@@ -61,7 +70,6 @@ export function BellIcon({ color }) {
         </DropdownItem> : notifications.map((notification) => {
             return <DropdownSection showDivider>
             <DropdownItem
-              key={notification.message}
               className="p-4"
             >
               <Link color="foreground" href={notification.link}>
@@ -200,11 +208,11 @@ export const Navbar = () => {
         </NavbarItem>
       </NavbarContent>
 
-      <NavbarContent className="sm:hidden basis-1 pl-4" justify="end">
+      {/* <NavbarContent className="sm:hidden basis-1 pl-4" justify="end">
         <ThemeSwitch />
         <BellIcon />
         <NavbarMenuToggle />
-      </NavbarContent>
+      </NavbarContent> */}
 
       <NavbarMenu>
         <div className="mx-4 mt-2 flex flex-col gap-2">

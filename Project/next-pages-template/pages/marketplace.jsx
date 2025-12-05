@@ -4,6 +4,7 @@ import { useEffect } from "react";
 import ProductCards from "@/components/productCards";
 import axios from "axios";
 import { ToastProvider } from "@heroui/react";
+import DefaultLayout from "../layouts/default";
 
 export default function Marketplace() {
     async function getProducts() {
@@ -27,8 +28,7 @@ export default function Marketplace() {
         x();
     }, []);
 
-    return <>
-        <Navbar />
+    return <DefaultLayout>
         <ToastProvider placement="top-center" toastOffset={60}></ToastProvider>
         <div className="mt-4">
             <div></div>
@@ -41,5 +41,5 @@ export default function Marketplace() {
                 </div>
             </div>
         </div>
-    </>
+    </DefaultLayout>
 }
