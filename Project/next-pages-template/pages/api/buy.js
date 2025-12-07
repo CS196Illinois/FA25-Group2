@@ -65,19 +65,21 @@ export default async function handler(req, res) {
 
     const seller = productRes.rows[0].user_id;
 
-    //only one negotiation per sender until user rejects
+    //only one negotiation per sender until seller rejects
     const status_result = await pool.query(
-      'SELECT status FROM negotiations WHERE sender_id = $1 AND product_id = $2', [seller, product_id]
+      'SELECT status FROM negotiations WHERE buyer = $1 AND product_id = $2', [seller, product_id]
     );
-    const status = status_result.rows[0].status;
-    if (status == "pending") {
-      return res.status(400).json({error: "User cannot send another negotiation because seller response is still pending."});
-    } else if (status == "accepted") {
-      return res.status(400).json({error: "User cannot send another negotiation because seller has already accepted one from this user."});
-    } else if (status == "blocked") {
-      return res.status(400).json({error: "User is blocked. No notification sent."})
-    };
-
+    if (status_result.rows[0]) {
+      const status = status_result.rows[0].status;
+      if (status == "pending") {
+        return res.status(400).json({error: "User cannot send another negotiation because seller response is still pending."});
+      } else if (status == "accepted") {
+        return res.status(400).json({error: "User cannot send another negotiation because seller has already accepted one from this user."});
+      } else if (status == "blocked") {
+        return res.status(400).json({error: "User is blocked. No notification sent."})
+      };
+    }
+    
     // Insert negotiation
     const negotiationResult = await pool.query(
       `INSERT INTO negotiations (product_id, buyer, seller, price, status, created_at)

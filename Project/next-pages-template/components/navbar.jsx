@@ -67,7 +67,7 @@ export function BellIcon({ color }) {
           <div className="flex justify-center">
             <Spinner color="foreground" />
           </div>
-        </DropdownItem> : notifications.map((notification) => {
+        </DropdownItem> : (notifications?.map((notification) => {
             return <DropdownSection showDivider>
             <DropdownItem
               className="p-4"
@@ -77,7 +77,7 @@ export function BellIcon({ color }) {
               </Link>
             </DropdownItem>
           </DropdownSection>
-        })}
+        }))}
       </DropdownMenu>
     </Dropdown>
 }

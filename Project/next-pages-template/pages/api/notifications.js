@@ -5,10 +5,13 @@ import authorized from "./authorized";
 export default async function handler(req, res) {
 
     if (req.method !== "GET") {
-        return res.status(405).json({ error: "Method not allowed" })
+        return res.status(405).json({ error: "Method not allowed"});
     }; 
 
     const {authToken, username} = req.query;
+    if (!(authToken)) {
+        return res.status(200).json({message: "No authToken right now", notifications: []});
+    }
 
     const user_result = await pool.query(
         'SELECT user_id FROM users WHERE username = $1', [username]
@@ -26,6 +29,10 @@ export default async function handler(req, res) {
         );
 
         const first = notifications_result.rows[0];
+        if (!(first)) {
+            console.log("\n\nSQL HAD NOTHING IN STORE");
+            return res.status(200).json({message: "No new notifications.", notifications: []})
+        }
         const read = first.read;
 
         await pool.query(
@@ -33,6 +40,7 @@ export default async function handler(req, res) {
         )
         return res.status(200).json({message: 'Succesfully grabbed notifications', notifications: notifications_result.rows, read})
     } catch (error) {
+        console.log("\n Error was : " + error + "\nat : \n" + error.stack + "\n\n");
         res.status(500).json({error})
     }
 }

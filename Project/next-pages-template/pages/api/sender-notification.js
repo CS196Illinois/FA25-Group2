@@ -35,8 +35,10 @@ export default async function handler(req, res) {
     if (choice == 'accepted') {
         message = seller_username + " has accepted your negotiation request!\n" + userMessage;
         await pool.query(
-            'UPDATE products p SET sold = true FROM negotiations n WHERE n.product_id = p.product_id AND n.negotiation_id = $1', [negotiation_id]
+            `UPDATE products p SET sold = true FROM negotiations n WHERE n.product_id = p.product_id 
+             AND n.negotiation_id = $1`, [negotiation_id]
         );
+        console.log("Successfully saved the product as sold");
     } else if (choice == 'rejected') {
         message = seller_username + " has declined your negotiation offer.\n" + userMessage;
     } else if (choice == 'blocked') {
@@ -100,7 +102,8 @@ export default async function handler(req, res) {
         );
 
         await pool.query(
-            'INSERT INTO notifications (recipient, sender, product_id, message, read, created_at, link) VALUES ($1, $2, $3, $4, false, NOW(), NULL)', [sender_id, seller_id, product_id, message]
+            'INSERT INTO notifications (recipient, sender, product_id, message, read, created_at, link) VALUES ($1, $2, $3, $4, false, NOW(), NULL)', 
+            [sender_id, seller_id, product_id, message]
         );
         
         res.status(200).json({message: 'Successfully sent a notification'})

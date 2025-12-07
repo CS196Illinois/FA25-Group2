@@ -11,7 +11,7 @@ export default async function handler(req, res) {
         SELECT p.product_id, p.name, p.description, p.price, p.image, u.username as seller, u.pfp 
         FROM products p 
         NATURAL JOIN users u 
-        WHERE 1=1
+        WHERE 1=1 AND p.sold = false
     `;
     
     const queryParams = [];
